@@ -62,13 +62,13 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Classify text into 20 Newsgroups categories.")
     parser.add_argument("text", help="The text to classify.")
-    parser.add_argument("--model", choices=["knn", "nb", "dt", "svm","pca"], default="knn", help="Choose the classification model (knn, nb, dt). Default is knn.")
+    parser.add_argument("--model", choices=["knn", "nb", "dt", "svm"], default="knn", help="Choose the classification model (knn, nb, dt). Default is knn.")
 
     args = parser.parse_args()
 
     # Choose the model path based on the user's choice
-    model_path_dict = {"knn": "model/knn/knn_model.joblib", "nb": "model/nb/naive_bayes_model.joblib", "dt": "model/dt/decision_tree_model.joblib","svm":"model/svm/svm_model.joblib","pca":"model/pca/pca_model.joblib"}
-    vect_path_dict = {"knn": "model/knn/tfidf_vectorizer.joblib", "nb": "model/nb/tfidf_vectorizer.joblib", "dt": "model/dt/tfidf_vectorizer.joblib","svm":"model/svm/tfidf_vectorizer.joblib","pca":"model/pca/tfidf_vectorizer.joblib"}
+    model_path_dict = {"knn": "model/knn/knn_model.joblib", "nb": "model/nb/naive_bayes_model.joblib", "dt": "model/dt/decision_tree_model.joblib","svm":"model/svm/svm_model.joblib",}
+    vect_path_dict = {"knn": "model/knn/tfidf_vectorizer.joblib", "nb": "model/nb/tfidf_vectorizer.joblib", "dt": "model/dt/tfidf_vectorizer.joblib","svm":"model/svm/tfidf_vectorizer.joblib"}
     model_path = model_path_dict[args.model]
     vect_path = vect_path_dict[args.model]
     print(model_path)
