@@ -1,23 +1,3 @@
-# import os
-# import joblib
-
-# # Set the path to the models folder
-# models_folder = "/A:/Dev/FDS/newsgroup/models"
-
-# # Load the trained model
-# model_path = os.path.join(models_folder, "trained_model.joblib")
-# model = joblib.load(model_path)
-
-# # Load the dataset for prediction
-# dataset_path = "/A:/Dev/FDS/newsgroup/dataset.csv"
-# dataset = load_dataset(dataset_path)
-
-# # Perform prediction
-# predictions = model.predict(dataset)
-
-# # Print the predictions
-# print(predictions)
-
 import re
 import joblib
 import argparse
@@ -26,26 +6,28 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Function to preprocess the entered text
-def preprocess_text(text, vect_path):
-    # # Remove headers using regex
-    # header_pattern = re.compile(r"^(From|Subject|Organization|Lines|Nntp-Posting-Host|Summary|Keywords|Reply-To|Distribution|X-Newsreader|Article-I.D.):.*\n")
-    # cleaned_text = header_pattern.sub("", text)
-    
-    # Tokenize the text
-    # token = word_tokenize(text)
-    # lemmatizer = WordNetLemmatizer()
+def preprocess_text(text):
+    # Remove unwanted characters and convert to lowercase
+    text = re.sub(r'[^a-zA-Z\s]', '', text.lower())
+    # Tokenize
+    tokens = word_tokenize(text)
+    # Lemmatize
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
+    # Join tokens into a cleaned string
+    cleaned_text = ' '.join(lemmatized_tokens)
+    return cleaned_text
 
-    # normalized = [[lemmatizer.lemmatize(t.lower()) for t in token]]
-    # Vectorize the text
+def process_text(text, vect_path):
+    preprocessed_documents = [preprocess_text(doc) for doc in text]
     vectorizer = joblib.load(vect_path)
-    vectors = vectorizer.transform(text)
-    # vectors = list(filter(lambda x: x is not None, vectors))
+    vectors = vectorizer.transform(preprocessed_documents)
     return vectors
 
 # Function to load and classify using a given model
 def classify_text(text, model_path, vect_path):
     # Preprocess the text
-    preprocessed_text = preprocess_text(text, vect_path)
+    preprocessed_text = process_text(text, vect_path)
 
     # Load the model
     model = joblib.load(model_path)
@@ -62,7 +44,7 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Classify text into 20 Newsgroups categories.")
     parser.add_argument("text", help="The text to classify.")
-    parser.add_argument("--model", choices=["knn", "nb", "dt", "svm"], default="knn", help="Choose the classification model (knn, nb, dt). Default is knn.")
+    parser.add_argument("--model", choices=["knn", "nb", "dt", "svm"], default="nb", help="Choose the classification model (knn, nb, dt). Default is knn.")
 
     args = parser.parse_args()
 
